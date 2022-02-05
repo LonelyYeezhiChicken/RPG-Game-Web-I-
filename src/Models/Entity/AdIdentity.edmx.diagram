@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="d77696aab5474965aae0e2ba7873afb3" Name="Diagram1" ZoomLevel="94">
+        <EntityTypeShape EntityType="IdentityModel.AspNetRoles" Width="1.5" PointX="0.75" PointY="2.5" />
+        <EntityTypeShape EntityType="IdentityModel.AspNetUserClaims" Width="1.5" PointX="5.25" PointY="3.5" />
+        <EntityTypeShape EntityType="IdentityModel.AspNetUserLogins" Width="1.5" PointX="5.25" PointY="1" />
+        <EntityTypeShape EntityType="IdentityModel.AspNetUsers" Width="1.5" PointX="3" PointY="1.375" />
+        <AssociationConnector Association="IdentityModel.FK_dbo_AspNetUserClaims_dbo_AspNetUsers_UserId" />
+        <AssociationConnector Association="IdentityModel.FK_dbo_AspNetUserLogins_dbo_AspNetUsers_UserId" />
+        <AssociationConnector Association="IdentityModel.AspNetUserRoles" />
+        <EntityTypeShape EntityType="IdentityModel.MessageBoard" Width="1.5" PointX="0.75" PointY="6.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

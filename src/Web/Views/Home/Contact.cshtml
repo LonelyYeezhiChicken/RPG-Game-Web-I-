@@ -1,0 +1,130 @@
+﻿@{
+    ViewBag.Title = "尋找一隻雞";
+}
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+<i class="h2 fas fa-drumstick-bite"></i><span class="h2"> @ViewBag.Title.</span>
+<!-- Main content -->
+<section class="content" id="MessageBoard" v-cloak>
+    <!-- Default box -->
+    <div class="card">
+        <div class="card-body row">
+            <div class="col-5 text-center d-flex align-items-center justify-content-center" style="background-image:url('@Url.Content("~/adminlte/img/banner.png")');">
+                <div class="">
+                    <h2>聽說你在找我嗎?</h2>
+                    <p class="lead mb-5 text-secondary">
+                        有什麼悄悄話想對我說嗎?<br>
+                        可以留言給我哦!
+                    </p>
+                </div>
+            </div>
+            <div class="col-7">
+                <div class="form-group">
+                    <label for="inputName">姓名</label>
+                    <input v-model="userName" type="text" id="inputName" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail">E-Mail</label>
+                    <input v-model="userEamil" type="email" id="inputEmail" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="inputSubject">標題</label>
+                    <input v-model="userTitle" type="text" id="inputSubject" class="form-control" />
+                </div>
+                <div class="form-group">
+                    <label for="inputMessage">訊息</label>
+                    <textarea v-model="userMessage" id="inputMessage" class="form-control" rows="4"></textarea>
+                </div>
+                <span class="text-danger">{{erroeMsg}}</span>
+                <span class="text-success" v-if="isShowSuccessMsg">傳送成功</span>
+                <div class="form-group">
+                    <input type="button" class="btn btn-warning" @@click="ToSend()" value="送出">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+@Scripts.Render("~/bundles/axios")
+@Scripts.Render("~/bundles/Apis")
+<script src="~/Scripts/underscore/underscore.min.js"></script>
+<script src="~/Scripts/utils/axiosPlugin.js"></script>
+<script>
+    let vueApp = new Vue({
+        el: "#MessageBoard",
+        data: {
+            erroeMsg: '',
+            isShowSuccessMsg: false,
+            userName: '',
+            userEamil: '',
+            userTitle: '',
+            userMessage: ''
+        },
+        methods: {
+            ToReload: function () {
+                let _self = this;
+                _self.userName = '';
+                _self.userEamil = '';
+                _self.userTitle = '';
+                _self.userMessage = '';
+                _self.erroeMsg = '';
+            },
+            //檢查資料
+            ToCheckData: function () {
+                let _self = this;
+                let isMail = /^\w+((-\w+)|(\.\w+))*\@@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+                if (_self.userEamil === '') {
+                    _self.erroeMsg = '請輸入信箱';
+                    return false;
+                }
+                if (!isMail.test(_self.userEamil)) {
+                    _self.erroeMsg = '信箱格式不正確';
+                    return false;
+                }
+                if (_self.userName === '') {
+                    _self.erroeMsg = '請輸入名稱';
+                    return false;
+                }
+                if (_self.userTitle === '') {
+                    _self.erroeMsg = '請輸入標題';
+                    return false;
+                }
+                if (_self.userMessage === '') {
+                    _self.erroeMsg = '請輸入內容';
+                    return false;
+                }
+                if (_self.erroeMsg.length > 500) {
+                    _self.erroeMsg = '內容請少於500字';
+                    return false;
+                }
+                return true;
+            },
+            //存檔
+            ToSend: _.throttle(function () {
+                let _self = this;
+                _self.isShowSuccessMsg = false;
+                _self.erroeMsg = '';
+                if (!_self.ToCheckData()) { return; }
+
+                let messageData = {
+                    Name: _self.userName,
+                    Email: _self.userEamil,
+                    Title: _self.userTitle,
+                    Comtent: _self.userMessage
+                };
+                CreatMessage(messageData).then((res) => {
+                    if (res.data.Code === 'OK') {
+                        _self.ToReload();
+                        _self.isShowSuccessMsg = true;
+                    }
+                    else {
+                        _self.erroeMsg = res.data.msg;
+                    }
+                });
+            }, 5000)
+        }
+    })
+</script>

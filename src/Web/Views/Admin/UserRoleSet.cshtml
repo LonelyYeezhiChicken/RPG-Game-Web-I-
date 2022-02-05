@@ -1,0 +1,171 @@
+﻿
+@{
+    ViewBag.Title = "使用者角色";
+}
+<style>
+    [v-cloak] {
+        display: none;
+    }
+</style>
+<i class="h2 fas fa-drumstick-bite"></i><span class="h2"> @ViewBag.Title.</span>
+<div id="UserRoleSet" class="container" v-cloak>
+    <div class="content-body" v-if="isShowAddView">
+        <div class="row  mb-2">
+            <div class="col-lg-12 com-xs-12">
+                <div id="addfamaPic">
+                    <br />
+                    <div class="col-md-8">
+                        <form class="form-horizontal">
+                            <div class="form-group row" v-show="false">
+                                <label for="Uuid" class="col-lg-2 col-sm-3 col-form-label text-danger">*Uuid</label>
+                                <div class="col-lg-10 col-sm-9">
+                                    <input type="text" class="form-control" placeholder="Uuid" v-model="ueserRoleUuid">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="inputUeserRoleName" class="col-lg-2 col-sm-3 col-form-label text-danger">*權限角色</label>
+                                <div class="col-lg-10 col-sm-9">
+                                    <input type="text" class="form-control" placeholder="角色名稱" v-model="ueserRoleName">
+                                </div>
+                            </div>
+                        </form>
+                        <span class="text-danger">{{erroeMsg}}</span>
+                    </div>
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-default" @@click="ToCancel()"><i class="fa fa-times"></i>取消</button>
+                        <button type="button" class="btn btn-warning disabledswitch" @@click="ToSave()"><i class="fa fa-check"></i>儲存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="content-body" v-else>
+        <div class="row  mb-2">
+            <div class="col-lg-12 com-xs-12">
+                <form class="form-horizontal">
+                    <div class="form-group row">
+                        <button class="btn btn-warning disabledswitch" data-toggle="tooltip" title="新增角色" @@click="ToAdd()"><i class="fa fa-plus fa-lg"></i>新增角色</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-lg-12 com-xs-12">
+                <div class="table-responsive-vertical shadow-z-1">
+                    <table class="table table-bordered table-mc-indigo table-hover" id="mytable">
+                        <thead class="bg-warning">
+                            <tr>
+                                <th>序號</th>
+                                <th>角色名稱</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody v-if="UserData.length <= 0">
+                            <tr><td colspan="99" class="text-center">----查詢不到數據哦！----</td>
+                            <tr>
+                        </tbody>
+                        <tbody>
+                            <tr v-for="(item, index) in UserData" :key="index">
+                                <td data-title="序號" style="display:table-cell; vertical-align:middle">{{index+1}}</td>
+                                <td data-title="角色名稱" style="display:table-cell; vertical-align:middle">
+                                    {{item.Name}}
+                                </td>
+                                <td style="display:table-cell; vertical-align:middle">
+                                    <div class="btn-group">
+                                        <button class="btn btn-warning" data-toggle="tooltip" title="編輯" @@click="ToEdit(item.Id)"><i class="fa fa-edit fa-lg"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        let url = "@Url.Content("~/")";
+        let vueApp = new Vue({
+            el: "#UserRoleSet",
+            data: {
+                UserData: [],
+                ueserRoleUuid:'',
+                ueserRoleName:'',
+                isShowAddView: false,
+                erroeMsg:''
+            },
+            created() {
+                let _self = this;
+                _self.ToLoad();
+            },
+            methods: {
+                //載入
+                ToLoad: function () {
+                    let _self = this;
+                    LoadUserRoles().then((res) => {
+                        _self.UserData = res.data;
+                    });
+                },
+                ToReload: function () {
+                    let _self = this;
+                    _self.ueserRoleUuid = '';
+                    _self.ueserRoleName = '';
+                    _self.erroeMsg = '';
+                },
+                //新增
+                ToAdd: function () {
+                    let _self = this;
+                    _self.isShowAddView = true;
+                },
+                //編輯
+                ToEdit: function (id) {
+                    let _self = this;
+                    let data = _self.UserData.filter(item => item.Id === id)[0];
+                    _self.ueserRoleUuid = data.Id;
+                    _self.ueserRoleName = data.Name;
+                    _self.isShowAddView = true;
+                },
+                //取消
+                ToCancel: function ()  {
+                    let _self = this;
+                    _self.ToReload();
+                    _self.isShowAddView = false;
+                },
+                //檢查資料
+                ToCheckData: function () {
+                    let _self = this;
+                    if (_self.ueserRoleName === '') {
+                        _self.erroeMsg = '請輸入角色';
+                        return false;
+                    }
+                    if (_self.UserData.filter(item => item.Name === _self.ueserRoleName).length > 0) {
+                        _self.erroeMsg = '此角色已存在';
+                        return false;
+                    }
+                    return true;
+                },
+                //存檔
+                ToSave: _.throttle(function () {
+                    let _self = this;
+                    _self.erroeMsg = '';
+                    if (!_self.ToCheckData()) { return;}
+
+                    let UserRolesData = {
+                        Id: _self.ueserRoleUuid,
+                        Name: _self.ueserRoleName
+                    };
+                    AddOrEditUserRole(UserRolesData).then((res) => {
+                        if (res.data.Code === 'OK') {
+                            _self.ToLoad();
+                            _self.ToReload();
+                            _self.isShowAddView = false;
+                        }
+                        else {
+                            _self.erroeMsg = res.data.msg;
+                        }
+                    });
+                }, 5000)
+            }
+        })
+    </script>
+}

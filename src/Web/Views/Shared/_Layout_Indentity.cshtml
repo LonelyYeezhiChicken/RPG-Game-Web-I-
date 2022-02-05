@@ -1,0 +1,34 @@
+﻿@{
+    var config = new System.Collections.Specialized.NameValueCollection();
+    config = (System.Collections.Specialized.NameValueCollection)System.Configuration.ConfigurationManager.GetSection("WebTitle");
+}
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    @if (Convert.ToBoolean(config["DebugMode"]))
+    {
+        @Scripts.Render("~/bundles/vue")
+    }
+    else
+    {
+        @Scripts.Render("~/bundles/vuePd")
+    }
+    <link rel="shortcut icon" href="~/favicon.ico">
+    <title>Login</title>
+</head>
+<body class="hold-transition login-page">
+    @RenderBody()
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @*@Scripts.Render("~/adminlte/js")*@
+    <script src="~/adminlte/js/adminlte.min.js"></script>
+    @RenderSection("jsFile", required: false)
+    @RenderSection("js", required: false)
+    @RenderSection("scripts", required: false)
+</body>
+</html>

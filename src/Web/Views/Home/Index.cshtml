@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="jumbotron" style="background-image:url('@Url.Content("~/adminlte/img/banner.png")');">
+    <img src="~/adminlte/img/CLogo.png" class="img-size-50 mr-3 img-circle" /><a href="#" class="h2"><b>Chicken Say Hi</b></a>
+    <p class="lead">這是孤獨一隻雞的故事小天地</p>
+</div>
+
+<div class="row text-secondary d-flex justify-content-around">
+    <div class="col-md-3 card mr-2 border border-right-0 border-top-0 border-bottom-0 border-warning">
+        <div class="card-body">
+            <i class="fas fa-feather-alt h3"></i><span class="h3"><b>關於一隻雞</b></span>
+            <p class="text-secondary">
+                想知道更多關於一隻雞得故事就進來吧
+            </p>
+            <p><a class="btn btn-warning" href="@Url.Content("~/Home/About")">Go &raquo;</a></p>
+        </div>
+    </div>
+    <div class="col-md-3 card mr-2 border border-right-0 border-top-0 border-bottom-0 border-warning">
+        <div class="card-body">
+            <i class="fas fa-feather-alt h3"></i><span class="h3"><b>尋找一隻雞</b></span>
+            <p class="text-secondary">這邊可以連絡一隻雞</p>
+            <p><a class="btn btn-warning" href="@Url.Content("~/Home/Contact")">Go &raquo;</a></p>
+        </div>
+    </div>
+    <div class="col-md-3 card mr-2 border border-right-0 border-top-0 border-bottom-0 border-warning">
+        <div class="card-body">
+            <i class="fas fa-feather-alt h3"></i><span class="h3"><b>一隻雞的作品</b></span>
+            <p class="text-secondary">這邊是一隻雞的作品，想看看我有什麼作品歡迎進入</p>
+            <p><a class="btn btn-warning" href="@Url.Content("~/Home/About")">Go &raquo;</a></p>
+        </div>
+    </div>
+</div>

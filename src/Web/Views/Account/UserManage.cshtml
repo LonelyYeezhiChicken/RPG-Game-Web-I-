@@ -1,0 +1,191 @@
+﻿@{
+    ViewBag.Title = "使用者帳號";
+}
+<style>
+    [v-cloak] {
+        display: none;
+    }
+
+    .table tbody tr td {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+</style>
+<i class="h2 fas fa-kiwi-bird"></i><span class="h2"> @ViewBag.Title.</span>
+<div id="UserManage" class="container" v-cloak>
+    <div class="content-body">
+        <div class="row  mb-2">
+            <div class="col-lg-12 com-xs-12">
+                <div id="addfamaPic">
+                    <br />
+                    <div class="col-md-8">
+                        <form class="form-horizontal">
+                            <div class="form-group row" v-show="false">
+                                <label for="Uuid" class="col-lg-2 col-sm-3 col-form-label text-danger">*Uuid</label>
+                                <div class="col-lg-10 col-sm-9">
+                                    <input type="text" class="form-control" placeholder="Uuid" v-model="Id">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="inputUserName" class="col-lg-2 col-sm-3 col-form-label text-danger">*使用者</label>
+                                <div class="col-lg-10 col-sm-9">
+                                    <input type="text" class="form-control" placeholder="使用者名稱" v-model="UserName">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="inputEmail" class="col-lg-2 col-sm-3 col-form-label text-danger">*信箱</label>
+                                <div class="col-lg-10 col-sm-9">
+                                    <input type="email" class="form-control" placeholder="使用者信箱" v-model="Email">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="inputPhoneNumber" class="col-lg-2 col-sm-3 col-form-label text-gray">電話號碼</label>
+                                <div class="col-lg-10 col-sm-9">
+                                    <input type="tel" class="form-control" placeholder="電話號碼" v-model="PhoneNumber">
+                                </div>
+                            </div>
+                        </form>
+                        <span class="text-danger">{{erroeMsg}}</span>
+                    </div>
+                    <div class="col-md-12">
+                        <button type="button" class="btn btn-danger disabledswitch" @@click="ToChangePassword()"><i class="fas fa-key"></i>修改密碼</button>
+                        <button type="button" class="btn btn-warning disabledswitch" @@click="ToSave()"><i class="fa fa-check"></i>儲存</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {   
+    <script>
+    let url = "@Url.Content("~/")";
+    let vueApp = new Vue({
+        el: "#UserManage",
+        data: {
+            //Api資料
+            UserData: [],
+            //畫面資料
+            Id: '',
+            Email: '',
+            EmailConfirmed: '',
+            Password: '',
+            SecurityStamp: '',
+            PhoneNumber: '',
+            PhoneNumberConfirmed: '',
+            TwoFactorEnabled: '',
+            LockoutEndDateUtc: '',
+            LockoutEnabled: '',
+            AccessFailedCount: '',
+            UserName: '',
+            CheckPassword: '',
+            selected:[],
+            selected1: [],
+            selectedSearchData: '',
+            erroeMsg: ''
+        },
+        created() {
+            let _self = this;
+            _self.ToLoad();
+        },
+        methods: {
+            //載入
+            ToLoad: function () {
+                let _self = this;
+                //載入使用者
+                LoadUserByLoginUser().then((res) => {
+                    _self.Id = res.data.Id;
+                    _self.Email = res.data.Email;
+                    _self.EmailConfirmed = res.data.EmailConfirmed;
+                    _self.Password = res.data.Password;
+                    _self.SecurityStamp = res.data.SecurityStamp;
+                    _self.PhoneNumber = res.data.PhoneNumber;
+                    _self.PhoneNumberConfirmed = res.data.PhoneNumberConfirmed;
+                    _self.TwoFactorEnabled = res.data.TwoFactorEnabled;
+                    _self.LockoutEndDateUtc = res.data.LockoutEndDateUtc;
+                    _self.LockoutEnabled = res.data.LockoutEnabled;
+                    _self.AccessFailedCount = res.data.AccessFailedCount;
+                    _self.UserName = res.data.UserName;
+                });
+            },
+            //初始化物件
+            ToReload: function () {
+                let _self = this;
+                _self.Id = '';
+                _self.Email = '';
+                _self.EmailConfirmed = '';
+                _self.PasswordHash = '';
+                _self.SecurityStamp = '';
+                _self.PhoneNumber = '';
+                _self.Password = '';
+                _self.CheckPassword = '';
+                _self.PhoneNumberConfirmed = '';
+                _self.TwoFactorEnabled = '';
+                _self.LockoutEndDateUtc = '';
+                _self.LockoutEnabled = '';
+                _self.AccessFailedCount = '';
+                _self.UserName = '';
+                _self.erroeMsg = '';
+            },            
+            //取消
+            ToCancel: function () {
+                let _self = this;
+                _self.ToReload();
+            },
+            //檢查資料
+            ToCheckData: function () {
+                let _self = this;
+                let isMail = /^\w+((-\w+)|(\.\w+))*\@@[A-Za-z0-9]+((\.|-)[A-Za-z0-9]+)*\.[A-Za-z]+$/;
+                if (_self.Email === '') {
+                    _self.erroeMsg = '請輸入信箱';
+                    return false;
+                }
+                if (!isMail.test(_self.Email)) {
+                    _self.erroeMsg = '信箱格式不正確';
+                    return false;
+                }
+                if (_self.UserName === '') {
+                    _self.erroeMsg = '請輸入使用者名稱';
+                    return false;
+                }
+                return true;
+            },
+            ToChangePassword: _.throttle(function () {
+                let _self = this;
+                window.location = '@Url.Content("~/Account/ChangePassword?email=")' + _self.Email;
+            },5000),
+            //存檔
+            ToSave: function () {
+                let _self = this;
+                _self.erroeMsg = '';
+                if (!_self.ToCheckData()) { return; }
+
+                let data = {
+                    Id: _self.Id,
+                    Email: _self.Email,
+                    EmailConfirmed: _self.EmailConfirmed,
+                    Password: _self.Password,
+                    SecurityStamp: _self.SecurityStamp,
+                    PhoneNumber: _self.PhoneNumber,
+                    PhoneNumberConfirmed: _self.PhoneNumberConfirmed,
+                    TwoFactorEnabled: _self.TwoFactorEnabled,
+                    LockoutEndDateUtc: _self.LockoutEndDateUtc,
+                    LockoutEnabled: _self.LockoutEnabled,
+                    AccessFailedCount: _self.AccessFailedCount,
+                    UserName: _self.UserName,
+                };
+                AddOrEditUser(data).then((res) => {
+                    if (res.data.Code === 'OK') {
+                        _self.ToLoad();
+                        _self.ToReload();
+                    }
+                    else {
+                        _self.erroeMsg = res.data.msg;
+                    }
+                });
+            }
+        }
+    })
+    </script>
+}
